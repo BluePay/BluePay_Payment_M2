@@ -43,8 +43,6 @@ class Form extends \Magento\Framework\View\Element\Template
         \Magento\Customer\Model\CustomerRegistry $customerRegistry,
         \Magento\Customer\Model\AddressRegistry $addressRegistry,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration,
         CcConfig $ccConfig,
         array $data = []
     ) {
@@ -53,9 +51,9 @@ class Form extends \Magento\Framework\View\Element\Template
     $this->customerRegistry = $customerRegistry;
     $this->addressRegistry = $addressRegistry;
     $this->objectManager = $objectManager;
-    $this->storeManager = $storeManager;
+    $this->storeManager = $context->getStoreManager();
     $this->ccConfig = $ccConfig;
-    $this->scopeConfiguration = $scopeConfiguration;
+    $this->scopeConfiguration = $context->getScopeConfig();
     }
 
     public function _prepareLayout()

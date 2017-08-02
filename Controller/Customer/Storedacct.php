@@ -34,7 +34,6 @@ class Storedacct extends \Magento\Framework\App\Action\Action
         \Magento\Customer\Model\CustomerRegistry $customerRegistry,
         \Magento\Framework\App\Request\Http $request,
         \Magento\Framework\App\Response\Http $response,
-        \Magento\Framework\UrlInterface $url,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Framework\HTTP\ZendClientFactory $zendClientFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration
@@ -44,7 +43,7 @@ class Storedacct extends \Magento\Framework\App\Action\Action
         $this->customerRegistry = $customerRegistry;
         $this->request = $request;
         $this->response = $response;
-        $this->url = $url;
+        $this->url = $context->getUrl();
         $this->resultPageFactory = $resultPageFactory;
         $this->zendClientFactory = $zendClientFactory;
         $this->scopeConfiguration = $scopeConfiguration;
