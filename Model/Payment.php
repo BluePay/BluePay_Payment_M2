@@ -156,7 +156,6 @@ class Payment extends \Magento\Payment\Model\Method\Cc
         \BluePay\Payment\Model\Request\Factory $requestFactory,
         \BluePay\Payment\Model\Response\Factory $responseFactory,
         \Magento\Framework\HTTP\ZendClientFactory $zendClientFactory,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -170,7 +169,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
         $this->requestFactory = $requestFactory;
         $this->responseFactory = $responseFactory;
         $this->zendClientFactory = $zendClientFactory;
-        $this->eventManager = $eventManager;
+        $this->eventManager = $context->getEventDispatcher();
         $this->messageManager = $messageManager;
 
         parent::__construct(

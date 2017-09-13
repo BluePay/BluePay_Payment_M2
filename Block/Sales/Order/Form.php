@@ -33,14 +33,13 @@ class Form extends \Magento\Payment\Block\Form\Cc
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Payment\Model\Config $paymentConfig,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration,
         \Magento\Customer\Model\CustomerRegistry $customerRegistry,
         \Magento\Backend\Model\Session\Quote $backend,
         array $data = []
     ) {
         parent::__construct($context, $paymentConfig, $data);
         $this->_paymentConfig = $paymentConfig;
-        $this->_scopeConfiguration = $scopeConfiguration;
+        $this->_scopeConfiguration = $context->getScopeConfig();
         $this->_customerRegistry = $customerRegistry;
         $this->_backend = $backend;
     }
