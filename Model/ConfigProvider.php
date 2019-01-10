@@ -134,21 +134,38 @@ class ConfigProvider implements ConfigProviderInterface
             'payment/bluepay_payment/payment_action',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         ) == "authorize" ? "AUTH" : "SALE";
-        $hashstr = $this->scopeConfiguration->getValue(
+        
+        $secretKey = $this->scopeConfiguration->getValue(
             'payment/bluepay_payment/secret_key',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-            ) .
-            $this->scopeConfiguration->getValue(
-                'payment/bluepay_payment/account_id',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-            ) .
-            //$transType .
-            $this->scopeConfiguration->getValue(
-                'payment/bluepay_payment/trans_mode',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-            );
+        );
+    
+        $accountID = $this->scopeConfiguration->getValue(
+            'payment/bluepay_payment/account_id',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+
+        $transMode = $this->scopeConfiguration->getValue(
+            'payment/bluepay_payment/trans_mode',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+
+        $hashstr = $secretKey . $accountID . $transMode;
+        $tpsDef = "MERCHANT MODE";
         $tps = hash('sha512', $hashstr);
+        $shpfTPSHashType = "SHA512";
+        $useCvv2 = $this->scopeConfiguration->getValue(
+            'payment/bluepay_payment/useccv',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         $this->cart->getQuote()->reserveOrderId()->save();
+        
+        $reservedOrderId = $this->cart->getQuote()->getReservedOrderId();
+        $shpfTPSDef = "SHPF_FORM_ID SHPF_ACCOUNT_ID TAMPER_PROOF_SEAL MERCHANT USE_CVV2 MODE ORDER_ID TPS_DEF SHPF_TPS_DEF";
+        $shpfHashString = $secretKey . "magento2" . $accountID . $tps . $accountID . $useCvv2 . $transMode . $reservedOrderId . $tpsDef . $shpfTPSDef;
+        $shpfTPS = hash('sha512', $shpfHashString);
+        $returnShpfTps = hash('sha512', $secretKey . $accountID);
+        $returnShpfTpsDef = "SHPF_ACCOUNT_ID";
         $i = 1;
         $level3 = [];
         // foreach ($this->cart->getQuote()->getAllItems() as $item) {
@@ -168,17 +185,11 @@ class ConfigProvider implements ConfigProviderInterface
         $config = [
             'payment' => [
                 'bluepay_payment' => [
-                    'accountId' => $this->scopeConfiguration->getValue(
-                        'payment/bluepay_payment/account_id',
-                        \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                    ),
+                    'accountId' => $accountID,
                     'tps' => $tps,
-                    'tpsDef' => "MERCHANT MODE",
+                    'tpsDef' => $tpsDef,
                     'transType' => $transType,
-                    'transMode' => $this->scopeConfiguration->getValue(
-                        'payment/bluepay_payment/trans_mode',
-                        \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                    ),
+                    'transMode' => $transMode,
                     'cctypes' => $this->scopeConfiguration->getValue(
                         'payment/bluepay_payment/cctypes',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE
@@ -209,12 +220,9 @@ class ConfigProvider implements ConfigProviderInterface
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE
                     ),
                     'iframeUrl' => 'https://secure.bluepay.com/interfaces/shpf?SHPF_FORM_ID=magento2',
-                    'useCvv2' => $this->scopeConfiguration->getValue(
-                        'payment/bluepay_payment/useccv',
-                        \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                    ),
+                    'useCvv2' => $useCvv2,
                     'level3' => $level3,
-                    'reservedOrderId' => $this->cart->getQuote()->getReservedOrderId(),
+                    'reservedOrderId' => $reservedOrderId,
                     'quoteData' => $this->cart->getQuote()->getData(),
                     'customerName1' => $name1,
                     'customerName2' => $name2,
@@ -223,7 +231,12 @@ class ConfigProvider implements ConfigProviderInterface
                     'customerCity' => $city,
                     'customerRegion' => $state,
                     'customerZip' => $zip,
-                    'customerEmail' => $email
+                    'customerEmail' => $email,
+                    'shpfTPSHashType' => $shpfTPSHashType,
+                    'shpfTPSDef' => $shpfTPSDef,
+                    'shpfTPS' => $shpfTPS,
+                    'returnShpfTPS' => $returnShpfTps,
+                    'returnShpfTpsDef' => $returnShpfTpsDef
                 ],
                 'ccform' => [
                     'icons' => $this->getIcons(),

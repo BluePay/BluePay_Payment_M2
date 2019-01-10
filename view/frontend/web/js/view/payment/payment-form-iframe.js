@@ -81,6 +81,7 @@ define(
                 window.addEventListener("message", receiveMessage, false);
             function receiveMessage(event)
             {
+                alert(event.data);
                 this.cardType = '';
                 this.authCode = '';
                 this.avs = '';
@@ -154,28 +155,46 @@ define(
                         var state = window.checkoutConfig.payment.bluepay_payment.customerRegion != null && window.checkoutConfig.payment.bluepay_payment.customerRegion != '' ? window.checkoutConfig.payment.bluepay_payment.customerRegion : '';
                         var zip = window.checkoutConfig.payment.bluepay_payment.customerZip != null && window.checkoutConfig.payment.bluepay_payment.customerZip != '' ? window.checkoutConfig.payment.bluepay_payment.customerZip : '';
                     }
-                    iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
-                        "&TRANSACTION_TYPE=" + transType +
-                        "&PAYMENT_TYPE=" + paymentType +
-                        "&NAME1=" + name1 +
-                        "&NAME2=" + name2 +
-                        "&COMPANY_NAME=" + company +
-                        "&EMAIL=" + email +
-                        "&ADDR1=" + addr1 +
-                        "&CITY=" + city +
-                        "&STATE=" + state +
-                        "&ZIPCODE=" + zip +
-                        "&CUSTOMER_IP=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerIP) +
-                        "&MERCHANT=" + window.checkoutConfig.payment.bluepay_payment.accountId + 
-                        "&TAMPER_PROOF_SEAL=" + window.checkoutConfig.payment.bluepay_payment.tps +
-                        "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
-                        "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
-                        "&ORDER_ID=" + window.checkoutConfig.payment.bluepay_payment.reservedOrderId + 
-                        "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef;
-                        $.each(window.checkoutConfig.payment.bluepay_payment.level3, function( key, value ) {
-                            iframeFields += '&' + key + '=' + encodeURIComponent(value);
-                        });
-                    $("#iframe").attr('src', window.checkoutConfig.payment.bluepay_payment.iframeUrl + iframeFields);
+                        var iframeURL = window.checkoutConfig.payment.bluepay_payment.iframeUrl;
+
+                        iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
+                            "&TRANSACTION_TYPE=" + transType +
+                            "&PAYMENT_TYPE=" + paymentType +
+                            "&NAME1=" + name1 +
+                            "&NAME2=" + name2 +
+                            "&COMPANY_NAME=" + company +
+                            "&EMAIL=" + email +
+                            "&ADDR1=" + addr1 +
+                            "&CITY=" + city +
+                            "&STATE=" + state +
+                            "&ZIPCODE=" + zip +
+                            "&CUSTOMER_IP=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerIP) +
+                            "&MERCHANT=" + window.checkoutConfig.payment.bluepay_payment.accountId + 
+                            "&TAMPER_PROOF_SEAL=" + window.checkoutConfig.payment.bluepay_payment.tps +
+                            "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
+                            "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
+                            "&ORDER_ID=" + window.checkoutConfig.payment.bluepay_payment.reservedOrderId + 
+                            "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef +
+                            $.each(window.checkoutConfig.payment.bluepay_payment.level3, function( key, value ) {
+                                iframeFields += '&' + key + '=' + encodeURIComponent(value);
+                            });
+
+                        postURL = iframeURL+iframeFields+
+                        "&SHPF_TPS_HASH_TYPE="+window.checkoutConfig.payment.bluepay_payment.shpfTPSHashType +
+                        "&SHPF_TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.returnShpfTpsDef +
+                        "&SHPF_TPS=" + window.checkoutConfig.payment.bluepay_payment.returnShpfTPS + 
+                        "&SHPF_ACCOUNT_ID=" + window.checkoutConfig.payment.bluepay_payment.accountId;
+
+                        iframeFields += "&APPROVED_URL=" + encodeURIComponent(postURL) + 
+                        "&DECLINED_URL=" + encodeURIComponent(postURL) + 
+                        "&MISSING_URL=" + encodeURIComponent(postURL) + 
+                        "&SHPF_TPS_HASH_TYPE=" + window.checkoutConfig.payment.bluepay_payment.shpfTPSHashType +
+                        "&SHPF_TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.shpfTPSDef +
+                        "&SHPF_TPS=" + window.checkoutConfig.payment.bluepay_payment.shpfTPS + 
+                        "&SHPF_ACCOUNT_ID=" + window.checkoutConfig.payment.bluepay_payment.accountId;
+
+
+                    $("#iframe").attr('src', iframeURL + iframeFields);
                     $("#iframe").height(230);
                     $("#iframe").width(600);
                 }
@@ -243,6 +262,8 @@ define(
                                 this.expirationYear = '';
                             }
                         }
+                        var iframeURL = window.checkoutConfig.payment.bluepay_payment.iframeUrl;
+
                         iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
                             "&TRANSACTION_TYPE=" + window.checkoutConfig.payment.bluepay_payment.transType +
                             "&RRNO=" + this.token +
@@ -260,11 +281,26 @@ define(
                             "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
                             "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
                             "&ORDER_ID=" + window.checkoutConfig.payment.bluepay_payment.reservedOrderId + 
-                            "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef;
+                            "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef +
                             $.each(window.checkoutConfig.payment.bluepay_payment.level3, function( key, value ) {
                                 iframeFields += '&' + key + '=' + encodeURIComponent(value);
                             });
-                            $("#iframe").attr('src', window.checkoutConfig.payment.bluepay_payment.iframeUrl + iframeFields + iframePaymentFields);
+
+                        postURL = iframeURL+iframeFields+
+                        "&SHPF_TPS_HASH_TYPE="+window.checkoutConfig.payment.bluepay_payment.shpfTPSHashType +
+                        "&SHPF_TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.returnShpfTpsDef +
+                        "&SHPF_TPS=" + window.checkoutConfig.payment.bluepay_payment.returnShpfTPS + 
+                        "&SHPF_ACCOUNT_ID=" + window.checkoutConfig.payment.bluepay_payment.accountId;
+
+                        iframeFields += "&APPROVED_URL=" + encodeURIComponent(postURL) + 
+                        "&DECLINED_URL=" + encodeURIComponent(postURL) + 
+                        "&MISSING_URL=" + encodeURIComponent(postURL) + 
+                        "&SHPF_TPS_HASH_TYPE=" + window.checkoutConfig.payment.bluepay_payment.shpfTPSHashType +
+                        "&SHPF_TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.shpfTPSDef +
+                        "&SHPF_TPS=" + window.checkoutConfig.payment.bluepay_payment.shpfTPS + 
+                        "&SHPF_ACCOUNT_ID=" + window.checkoutConfig.payment.bluepay_payment.accountId;
+
+                        $("#iframe").attr('src', iframeURL + iframeFields + iframePaymentFields);
                     });
                 });
 
@@ -488,28 +524,45 @@ define(
                     jQuery("#bluepay_payment_stored_acct_div").hide();
                     jQuery("#bluepay_payment_stored_acct_cb_div").hide();
                 }
-                iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
-                    "&TRANSACTION_TYPE=" + transType +
-                    "&PAYMENT_TYPE=" + paymentType +
-                    "&NAME1=" + name1 +
-                    "&NAME2=" + name2 +
-                    "&COMPANY_NAME=" + company +
-                    "&EMAIL=" + email +
-                    "&ADDR1=" + addr1 +
-                    "&CITY=" + city +
-                    "&STATE=" + state +
-                    "&ZIPCODE=" + zip +
-                    "&CUSTOMER_IP=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerIP) +
-                    "&MERCHANT=" + window.checkoutConfig.payment.bluepay_payment.accountId + 
-                    "&TAMPER_PROOF_SEAL=" + window.checkoutConfig.payment.bluepay_payment.tps +
-                    "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
-                    "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
-                    "&ORDER_ID=" + window.checkoutConfig.payment.bluepay_payment.reservedOrderId + 
-                    "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef;
-                    $.each(window.checkoutConfig.payment.bluepay_payment.level3, function( key, value ) {
-                        iframeFields += '&' + key + '=' + encodeURIComponent(value);
-                    });
-                    $("#iframe").attr('src', window.checkoutConfig.payment.bluepay_payment.iframeUrl + iframeFields + iframePaymentFields);
+                    var iframeURL = window.checkoutConfig.payment.bluepay_payment.iframeUrl;
+
+                    iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
+                        "&TRANSACTION_TYPE=" + transType +
+                        "&PAYMENT_TYPE=" + paymentType +
+                        "&NAME1=" + name1 +
+                        "&NAME2=" + name2 +
+                        "&COMPANY_NAME=" + company +
+                        "&EMAIL=" + email +
+                        "&ADDR1=" + addr1 +
+                        "&CITY=" + city +
+                        "&STATE=" + state +
+                        "&ZIPCODE=" + zip +
+                        "&CUSTOMER_IP=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerIP) +
+                        "&MERCHANT=" + window.checkoutConfig.payment.bluepay_payment.accountId + 
+                        "&TAMPER_PROOF_SEAL=" + window.checkoutConfig.payment.bluepay_payment.tps +
+                        "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
+                        "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
+                        "&ORDER_ID=" + window.checkoutConfig.payment.bluepay_payment.reservedOrderId + 
+                        "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef +
+                        $.each(window.checkoutConfig.payment.bluepay_payment.level3, function( key, value ) {
+                            iframeFields += '&' + key + '=' + encodeURIComponent(value);
+                        });
+
+                    postURL = iframeURL+iframeFields+
+                    "&SHPF_TPS_HASH_TYPE="+window.checkoutConfig.payment.bluepay_payment.shpfTPSHashType +
+                    "&SHPF_TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.returnShpfTpsDef +
+                    "&SHPF_TPS=" + window.checkoutConfig.payment.bluepay_payment.returnShpfTPS + 
+                    "&SHPF_ACCOUNT_ID=" + window.checkoutConfig.payment.bluepay_payment.accountId;
+
+                    iframeFields += "&APPROVED_URL=" + encodeURIComponent(postURL) + 
+                    "&DECLINED_URL=" + encodeURIComponent(postURL) + 
+                    "&MISSING_URL=" + encodeURIComponent(postURL) + 
+                    "&SHPF_TPS_HASH_TYPE=" + window.checkoutConfig.payment.bluepay_payment.shpfTPSHashType +
+                    "&SHPF_TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.shpfTPSDef +
+                    "&SHPF_TPS=" + window.checkoutConfig.payment.bluepay_payment.shpfTPS + 
+                    "&SHPF_ACCOUNT_ID=" + window.checkoutConfig.payment.bluepay_payment.accountId;
+
+                    $("#iframe").attr('src', iframeURL + iframeFields + iframePaymentFields);
                     $("#iframe").height(230);
                     $("#iframe").width(600);
             },
