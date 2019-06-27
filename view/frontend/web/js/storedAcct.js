@@ -70,7 +70,7 @@ require([
                     "&CARD_EXPIRE=" + jQuery('#bluepay_payment_stored_acct option:selected').text().split('[')[1].split('/')[0] + jQuery('#bluepay_payment_stored_acct option:selected').text().split('[')[1].split('/')[1].split([']'])[0] +
                     "&RRNO=" + jQuery('#bluepay_payment_stored_acct option:selected').val() +
                     "&ACH_ACCOUNT_TYPE=C" +
-                    "&ACH_ACCOUNT="
+                    "&ACH_ACCOUNT=" +
                     "&ACH_ROUTING=";
             } else if (jQuery('#bluepay_payment_stored_acct option:selected').val() != ''){
                 jQuery("#deleteBtn").show();
@@ -92,7 +92,7 @@ require([
                     "&CARD_EXPIRE=" +
                     "&RRNO=" +
                     "&ACH_ACCOUNT_TYPE=C" +
-                    "&ACH_ACCOUNT="
+                    "&ACH_ACCOUNT=" +
                     "&ACH_ROUTING=";
             }
             initIframe();
