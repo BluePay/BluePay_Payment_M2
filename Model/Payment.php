@@ -889,13 +889,31 @@ class Payment extends \Magento\Payment\Model\Method\Cc
         $infoInstance->setAdditionalInformation('message', $infoInstance->getMessage());
         $infoInstance->setAdditionalInformation('payment_type', $infoInstance->getPaymentType());
         $infoInstance->setAdditionalInformation('payment_account_mask', $infoInstance->getPaymentAccountMask());
-        $infoInstance->setAdditionalInformation('cc_number', $infoInstance->getCcNumber());
+        
+        // If ccNumber is present, we should mask
+        $maskedCcNum = $infoInstance->getCcNumber();
+        if (!empty($maskedCcNum))
+        {
+            $last4 = substr($infoInstance->getCcNumber(), -4);
+            $maskedCcNum = str_pad($last4, 16, "*", STR_PAD_LEFT);            
+        }
+        
+        $infoInstance->setAdditionalInformation('cc_number', $maskedCcNum);
         $infoInstance->setAdditionalInformation('cc_exp_month', $infoInstance->getCcExpMonth());
         $infoInstance->setAdditionalInformation('cc_exp_year', $infoInstance->getCcExpYear());
         $infoInstance->setAdditionalInformation('avs', $infoInstance->getAvs());
         $infoInstance->setAdditionalInformation('cvv2', $infoInstance->getCvv2());
         $infoInstance->setAdditionalInformation('echeck_acct_type', $infoInstance->getEcheckAcctType());
-        $infoInstance->setAdditionalInformation('echeck_account_number', $infoInstance->getEcheckAcctNumber());
+        
+        // if eCheckAcctNumber is present, we should mask
+        $maskedAcct = $infoInstance->getEcheckAcctNumber();
+        if (!empty($maskedAcct))
+        {
+            $last4 = substr($infoInstance->getEcheckAcctNumber(), -4);
+            $maskedAcct = str_pad($last4, 9, "*", STR_PAD_LEFT);            
+        }
+        
+        $infoInstance->setAdditionalInformation('echeck_account_number', $maskedAcct);
         $infoInstance->setAdditionalInformation('echeck_routing_number', $infoInstance->getEcheckRoutingNumber());
         $infoInstance->setAdditionalInformation('save_payment_info', $infoInstance->getSavePaymentInfo());
         $infoInstance->setAdditionalInformation('card_type', $infoInstance->getCardType());
