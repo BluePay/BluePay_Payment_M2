@@ -403,7 +403,6 @@ class Payment extends \Magento\Payment\Model\Method\Cc
     /**
      * Prepare request to gateway
      */
-    public function _buildRequest(\Magento\Payment\Model\InfoInterface $payment)
     {
         if ($payment->getTransactionType() != "REFUND" && ($payment->getIframe() == "1" || $payment->getAdditionalInformation('iframe') == "1") && $payment->getTransactionType() != "CAPTURE")
             return $payment;
@@ -521,12 +520,12 @@ class Payment extends \Magento\Payment\Model\Method\Cc
                 $request["addr2"] = $billing->getStreetLine(2);
             }
         }
-        $info = $this->getInfoInstance();
+
         switch ($payment->getPaymentType()) {
             case self::REQUEST_METHOD_CC:
                 if ($payment->getCcNumber()) {
-            $temp = $payment->getCcExpYear();
-                $CcExpYear = str_split($temp, 2);
+                    $temp = $payment->getCcExpYear();
+                    $CcExpYear = str_split($temp, 2);
                     $request->setCcNum($payment->getCcNumber())
                         ->setCcExpires(sprintf('%02d%02d', $payment->getCcExpMonth(), $payment->getCcExpYear()));
                     $request['CVCCVV2'] = $payment->getCcCid();
@@ -534,9 +533,10 @@ class Payment extends \Magento\Payment\Model\Method\Cc
                 break;
 
             case self::REQUEST_METHOD_ECHECK:
-                $request->setAchRouting($info->getAdditionalInformation('echeck_routing_number'))
-                    ->setAchAccount($info->getAdditionalInformation('echeck_account_number'))
-                    ->setAchAccountType($info->getAdditionalInformation('echeck_acct_type'))
+                $quotePayment = $this->checkoutSession->getQuote()->getPayment();
+                $request->setAchRouting($quotePayment->getEcheckRoutingNumber())
+                    ->setAchAccount($quotePayment->getEcheckAcctNumber())
+                    ->setAchAccountType($quotePayment->getEcheckAcctType())
                     ->setDocType('WEB');
                 break;
         }
@@ -546,6 +546,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
     public function _postRequest(\Magento\Framework\DataObject $request)
     {
         $info = $this->getInfoInstance();
+        $quotePayment = $this->checkoutSession->getQuote()->getPayment();
         $result = $this->responseFactory->create();
         if ($info->getIframe() == "1" && $info->getTransactionType() != "CAPTURE") {
             $result->setResult($info->getResult());
@@ -558,16 +559,16 @@ class Payment extends \Magento\Payment\Model\Method\Cc
             $result->setAvs($info->getAvs());
             $result->setCvv2($info->getCvv2());
             $this->assignBluePayToken($result->getRrno());
-        } else if ($info->getAdditionalInformation('iframe') == "1" && ($info->getTransactionType() != "CAPTURE" && $info->getTransactionType() != "REFUND")) {
-            $result->setResult($info->getAdditionalInformation('result'));
+        } else if ($quotePayment->getAdditionalInformation('iframe') == "1" && ($quotePayment->getTransactionType() != "CAPTURE" && $quotePayment->getTransactionType() != "REFUND")) {
+            $result->setResult($quotePayment->getResult());
             $result->setMessage($info->getAdditionalInformation('message'));
-            $result->setRrno($info->getAdditionalInformation('trans_id'));
-            $result->setToken($info->getAdditionalInformation('token'));
-            $result->setPaymentAccountMask($info->getAdditionalInformation('payment_account_mask'));
-            $result->setCcNumber($info->getAdditionalInformation('cc_number'));
-            $result->setCcExpires($info->getAdditionalInformation('cc_exp_month') . $info->getAdditionalInformation('cc_exp_year'));
+            $result->setRrno($quotePayment->getTransID());
+            $result->setToken($quotePayment->getToken());
+            $result->setPaymentAccountMask($quotePayment->getPaymentAccountMask());
+            $result->setCcNumber($info->getCcNumber());
+            $result->setCcExpires($info->getCcExpMonth() . $info->getCcExpYear());
             $result->setPaymentType($info->getAdditionalInformation('payment_type'));
-            $result->setCardType($info->getAdditionalInformation('card_type'));
+            $result->setCardType($quotePayment->getCardType());
             $result->setAuthCode($info->getAdditionalInformation('auth_code'));
             $result->setAvs($info->getAdditionalInformation('avs'));
             $result->setCvv2($info->getAdditionalInformation('cvv2'));
@@ -888,35 +889,8 @@ class Payment extends \Magento\Payment\Model\Method\Cc
         $infoInstance->setAdditionalInformation('result', $infoInstance->getResult());
         $infoInstance->setAdditionalInformation('message', $infoInstance->getMessage());
         $infoInstance->setAdditionalInformation('payment_type', $infoInstance->getPaymentType());
-        $infoInstance->setAdditionalInformation('payment_account_mask', $infoInstance->getPaymentAccountMask());
-        
-        // If ccNumber is present, we should mask
-        $maskedCcNum = $infoInstance->getCcNumber();
-        if (!empty($maskedCcNum))
-        {
-            $last4 = substr($infoInstance->getCcNumber(), -4);
-            $maskedCcNum = str_pad($last4, 16, "*", STR_PAD_LEFT);            
-        }
-        
-        $infoInstance->setAdditionalInformation('cc_number', $maskedCcNum);
-        $infoInstance->setAdditionalInformation('cc_exp_month', $infoInstance->getCcExpMonth());
-        $infoInstance->setAdditionalInformation('cc_exp_year', $infoInstance->getCcExpYear());
         $infoInstance->setAdditionalInformation('avs', $infoInstance->getAvs());
-        $infoInstance->setAdditionalInformation('cvv2', $infoInstance->getCvv2());
-        $infoInstance->setAdditionalInformation('echeck_acct_type', $infoInstance->getEcheckAcctType());
-        
-        // if eCheckAcctNumber is present, we should mask
-        $maskedAcct = $infoInstance->getEcheckAcctNumber();
-        if (!empty($maskedAcct))
-        {
-            $last4 = substr($infoInstance->getEcheckAcctNumber(), -4);
-            $maskedAcct = str_pad($last4, 9, "*", STR_PAD_LEFT);            
-        }
-        
-        $infoInstance->setAdditionalInformation('echeck_account_number', $maskedAcct);
-        $infoInstance->setAdditionalInformation('echeck_routing_number', $infoInstance->getEcheckRoutingNumber());
         $infoInstance->setAdditionalInformation('save_payment_info', $infoInstance->getSavePaymentInfo());
-        $infoInstance->setAdditionalInformation('card_type', $infoInstance->getCardType());
         $infoInstance->setAdditionalInformation('iframe', $infoInstance->getIframe());
 
         $this->_eventManager->dispatch(
