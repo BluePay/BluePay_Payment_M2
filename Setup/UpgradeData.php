@@ -13,7 +13,7 @@ class UpgradeData implements UpgradeDataInterface
 		ModuleContextInterface $context
 	) {
 		$setup->startSetup();
-		if (version_compare($context->getVersion(), '1.1.0', '<')) {
+		if (version_compare($context->getVersion(), '1.2.0', '<')) {
 			$connection = $setup->getConnection();
 			$table = $setup->getTable('quote_payment');
 			if ($connection->isTableExists($table) == true) {
