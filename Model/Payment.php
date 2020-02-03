@@ -403,6 +403,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
     /**
      * Prepare request to gateway
      */
+    public function _buildRequest(\Magento\Payment\Model\InfoInterface $payment)
     {
         if ($payment->getTransactionType() != "REFUND" && ($payment->getIframe() == "1" || $payment->getAdditionalInformation('iframe') == "1") && $payment->getTransactionType() != "CAPTURE")
             return $payment;
