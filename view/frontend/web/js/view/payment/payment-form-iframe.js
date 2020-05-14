@@ -81,50 +81,52 @@ define(
                 window.addEventListener("message", receiveMessage, false);
             function receiveMessage(event)
             {
-                this.cardType = '';
-                this.authCode = '';
-                this.avs = '';
-                this.cvv2 = '';
-                this.token = '';
-                var response = event.data;
-                if (typeof(response) === 'string') {
-                    this.result = "ERROR";
-                    this.message = event.data;
-                    jQuery("#result").val("ERROR");
-                    jQuery("#message").val(event.data);
-                } else {
-                    this.result = event.data["Result"];
-                    this.message = event.data["MESSAGE"];
-                    this.cardType = event.data["CARD_TYPE"];
-                    jQuery("#result").val(event.data["Result"]);
-                    jQuery("#message").val(event.data["MESSAGE"]);
-                    jQuery("#ccType").val(event.data["CARD_TYPE"]);
-                    jQuery("#token").val(event.data["MASTER_ID"]);
-                    jQuery("#transID").val(event.data["TRANS_ID"]);
-                    jQuery("#paymentType").val(event.data["PAYMENT_TYPE"]);
-                    jQuery('#paymentAcctMask').val(event.data["PAYMENT_ACCOUNT"]);
-                    this.authCode = event.data["AUTH_CODE"];
-                    this.avs = event.data["AVS"];
-                    this.cvv2 = event.data["CVV2"];
-                    this.token = event.data["RRNO"];
-                    if (event.data["PAYMENT_TYPE"] == "CREDIT" || event.data["PAYMENT_TYPE"] == "CC") {
-                        this.creditCardNumber = event.data["PAYMENT_ACCOUNT"];
-                        this.expirationMonth = event.data["CC_EXPIRES_MONTH"];
-                        this.expirationYear = event.data["CC_EXPIRES_YEAR"];     
-                        jQuery("#maskedCC").val(this.creditCardNumber);
-                        jQuery("#ccExpMonth").val(event.data["CC_EXPIRES_MONTH"]);
-                        jQuery("#ccExpYear").val(event.data["CC_EXPIRES_YEAR"]);                 
-                    } else if (event.data["PAYMENT_TYPE"] == "ACH") {
-                        this.echeckAccountType = event.data["ACH_ACCOUNT_TYPE"];
-                        this.echeckRoutingNumber = event.data["ACH_ROUTING"];
-                        jQuery("#achAccount").val(event.data["ACH_ACCOUNT_TYPE"]);
-                        jQuery("#achRouting").val(event.data["ACH_ROUTING"]);
-                        jQuery("#achAccount").val(event.data["ACH_ACCOUNT"]);
+                if (event.origin === "https://secure.bluepay.com") {
+                    this.cardType = '';
+                    this.authCode = '';
+                    this.avs = '';
+                    this.cvv2 = '';
+                    this.token = '';
+                    var response = event.data;
+                    if (typeof(response) === 'string') {
+                        this.result = "ERROR";
+                        this.message = event.data;
+                        jQuery("#result").val("ERROR");
+                        jQuery("#message").val(event.data);
+                    } else {
+                        this.result = event.data["Result"];
+                        this.message = event.data["MESSAGE"];
+                        this.cardType = event.data["CARD_TYPE"];
+                        jQuery("#result").val(event.data["Result"]);
+                        jQuery("#message").val(event.data["MESSAGE"]);
+                        jQuery("#ccType").val(event.data["CARD_TYPE"]);
+                        jQuery("#token").val(event.data["MASTER_ID"]);
+                        jQuery("#transID").val(event.data["TRANS_ID"]);
+                        jQuery("#paymentType").val(event.data["PAYMENT_TYPE"]);
+                        jQuery('#paymentAcctMask').val(event.data["PAYMENT_ACCOUNT"]);
+                        this.authCode = event.data["AUTH_CODE"];
+                        this.avs = event.data["AVS"];
+                        this.cvv2 = event.data["CVV2"];
+                        this.token = event.data["RRNO"];
+                        if (event.data["PAYMENT_TYPE"] == "CREDIT" || event.data["PAYMENT_TYPE"] == "CC") {
+                            this.creditCardNumber = event.data["PAYMENT_ACCOUNT"];
+                            this.expirationMonth = event.data["CC_EXPIRES_MONTH"];
+                            this.expirationYear = event.data["CC_EXPIRES_YEAR"];     
+                            jQuery("#maskedCC").val(this.creditCardNumber);
+                            jQuery("#ccExpMonth").val(event.data["CC_EXPIRES_MONTH"]);
+                            jQuery("#ccExpYear").val(event.data["CC_EXPIRES_YEAR"]);                 
+                        } else if (event.data["PAYMENT_TYPE"] == "ACH") {
+                            this.echeckAccountType = event.data["ACH_ACCOUNT_TYPE"];
+                            this.echeckRoutingNumber = event.data["ACH_ROUTING"];
+                            jQuery("#achAccount").val(event.data["ACH_ACCOUNT_TYPE"]);
+                            jQuery("#achRouting").val(event.data["ACH_ROUTING"]);
+                            jQuery("#achAccount").val(event.data["ACH_ACCOUNT"]);
+                        }
                     }
+                    self.placeOrder();
+                    jQuery('#submitBtn').attr('disabled',false);
+                    jQuery("#bluepay_payment_stored_acct").prop('selectedIndex',0);
                 }
-                self.placeOrder();
-                jQuery('#submitBtn').attr('disabled',false);
-                jQuery("#bluepay_payment_stored_acct").prop('selectedIndex',0);
             }
 
                 function initIframe() {

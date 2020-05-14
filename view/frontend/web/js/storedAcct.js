@@ -126,27 +126,29 @@ require([
         });
         window.addEventListener("message", receiveMessage, false);
         function receiveMessage(event) {
-            if (event.data["PAYMENT_TYPE"] == "CREDIT" || event.data["PAYMENT_TYPE"] == "CC") {
-                jQuery("#cc_expire_mm").val(event.data["CC_EXPIRES_MONTH"]);
-                jQuery("#cc_expire_yy").val(event.data["CC_EXPIRES_YEAR"]);                    
-            }
-            else if (event.data["Result"] === undefined) {
-                jQuery("#trans_result").val('0');
-                jQuery("#message").val(event.data);
+            if (event.origin === "https://secure.bluepay.com") {
+                if (event.data["PAYMENT_TYPE"] == "CREDIT" || event.data["PAYMENT_TYPE"] == "CC") {
+                    jQuery("#cc_expire_mm").val(event.data["CC_EXPIRES_MONTH"]);
+                    jQuery("#cc_expire_yy").val(event.data["CC_EXPIRES_YEAR"]);                    
+                }
+                else if (event.data["Result"] === undefined) {
+                    jQuery("#trans_result").val('0');
+                    jQuery("#message").val(event.data);
+                    submitForm();
+                    return;
+                }
+                jQuery("#trans_result").val(event.data["Result"]);
+                jQuery("#message").val(event.data["MESSAGE"]);
+                jQuery("#payment_type").val(event.data["PAYMENT_TYPE"]);
+                jQuery("#payment_account_mask").val(event.data["PAYMENT_ACCOUNT"]);
+                jQuery("#cc_type").val(event.data["CARD_TYPE"]);
+                jQuery("#master_id").val(event.data["MASTER_ID"]);
+                var $token = (event.data["TRANS_ID"] !== undefined) ? event.data["TRANS_ID"] : event.data["RRNO"];
+                jQuery("#rrno").val($token);
+                //jQuery('#form').submit();
+                //jQuery('#submitBtn').click();
                 submitForm();
-                return;
             }
-            jQuery("#trans_result").val(event.data["Result"]);
-            jQuery("#message").val(event.data["MESSAGE"]);
-            jQuery("#payment_type").val(event.data["PAYMENT_TYPE"]);
-            jQuery("#payment_account_mask").val(event.data["PAYMENT_ACCOUNT"]);
-            jQuery("#cc_type").val(event.data["CARD_TYPE"]);
-            jQuery("#master_id").val(event.data["MASTER_ID"]);
-            var $token = (event.data["TRANS_ID"] !== undefined) ? event.data["TRANS_ID"] : event.data["RRNO"];
-            jQuery("#rrno").val($token);
-            //jQuery('#form').submit();
-            //jQuery('#submitBtn').click();
-            submitForm();
         }
         initIframe();
     });
