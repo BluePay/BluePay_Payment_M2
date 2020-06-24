@@ -43,7 +43,7 @@
                                         class="select select-month"
                                         style="width: 260px"
                                         id="bluepay_payment_payment_type"
-                                        data-bind="attr: { id: 'bluepay_payment_payment_type'}, 
+                                        data-bind="attr: { id: 'bluepay_payment_payment_type'},
                                         value: paymentType">
                                         <option selected value="CC">Credit Card</option>
                                         <option value="ACH">eCheck</option>
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-    <br />        
+    <br />
     </div>
 
         <iframe id="iframe" frameBorder="0"></iframe>
@@ -130,5 +130,5 @@
         </div>
     </div>
 </div>
-<div data-bind='template: { afterRender: initPaymentFields }'> </div>
-<div data-bind='template: { afterRender: initIframe }'> </div>
+<div afterRender="initPaymentFields"></div>
+<div afterRender="initIframe"></div>

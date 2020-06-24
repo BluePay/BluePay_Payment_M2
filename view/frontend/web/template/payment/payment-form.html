@@ -33,8 +33,8 @@
                             <div class="control">
                                 <select name="payment[payment_type]"
                                         class="select select-month"
-                                        data-bind="attr: { id: getCode() + '_payment_type'}, 
-                                        event: {change: showHidePaymentFields}, 
+                                        data-bind="attr: { id: getCode() + '_payment_type'},
+                                        event: {change: showHidePaymentFields},
                                         value: paymentType">
                                         <option value="CC">Credit Card</option>
                                         <option value="ACH">eCheck</option>
@@ -286,4 +286,4 @@
         </div>
     </div>
 </div>
-<div data-bind='template: { afterRender: initPaymentFields }'> </div>
+<div afterRender="initPaymentFields"></div>
