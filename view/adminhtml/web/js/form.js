@@ -102,7 +102,6 @@ window.addEventListener("message", receiveMessage, false);
     }
 
     window.order.setPaymentMethod = function(method){
-            alert({content: method});
             if (this.paymentMethod && $('payment_form_'+this.paymentMethod)) {
                 var form = 'payment_form_'+this.paymentMethod;
                 [form + '_before', form, form + '_after'].each(function(el) {
