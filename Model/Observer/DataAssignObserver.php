@@ -66,8 +66,14 @@ class DataAssignObserver extends AbstractDataAssignObserver
         $payment->setTransID($additionalData->getData('trans_id'));
         $payment->setSavePaymentInfo($additionalData->getData('save_payment_info'));
         $payment->setTransactionType($additionalData->getData('trans_type'));
-        $paymentType = $additionalData->getData('card_type') == "ACH" ? "OT" : $additionalData->getData('card_type');
-        $payment->setCardType($paymentType);
+        if ($additionalData->getData('card_type') == "ACH") {
+            $payment->setCardType("OT");
+        } else if ($additionalData->getData('card_type') != "") {
+            $payment->setCardType($additionalData->getData('card_type'));
+        } else if ($additionalData->getData('cc_type') != "") {
+            $payment->setCardType($additionalData->getData('cc_type'));
+        }
+
         if ($additionalData->getData('iframe') == "1") {
             $payment->setResult($additionalData->getData('result'));
             $payment->setMessage($additionalData->getData('message'));

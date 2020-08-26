@@ -391,7 +391,7 @@ define([
             data['order[shipping_method]'] = method;
             this.loadArea(['shipping_method', 'totals', 'billing_method'], true, data);
             this.shippingMethod = method;
-            this.setPaymentMethod("bluepay_payment");
+            // this.setPaymentMethod("bluepay_payment");
         },
 
         switchPaymentMethod : function(method){

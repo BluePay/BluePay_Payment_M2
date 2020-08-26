@@ -95,14 +95,14 @@ window.addEventListener("message", receiveMessage, false);
     }
 
     window.order.setShippingMethod = function(method){
-            var data = {};
-            data['order[shipping_method]'] = method;
-            this.loadArea(['shipping_method', 'totals', 'billing_method'], true, data);
-            order.shippingMethod = method;
-            this.setPaymentMethod("bluepay_payment");
+        var data = {};
+        data['order[shipping_method]'] = method;
+        this.loadArea(['shipping_method', 'totals', 'billing_method'], true, data);
+        order.shippingMethod = method;
     }
 
     window.order.setPaymentMethod = function(method){
+            alert({content: method});
             if (this.paymentMethod && $('payment_form_'+this.paymentMethod)) {
                 var form = 'payment_form_'+this.paymentMethod;
                 [form + '_before', form, form + '_after'].each(function(el) {
@@ -155,6 +155,4 @@ window.addEventListener("message", receiveMessage, false);
                 jQuery("#bluepay_payment_stored_acct_div").hide();
             }
         }
-    order.setPaymentMethod('bluepay_payment');
-
 });

@@ -144,7 +144,10 @@ $shippingMethod = $block->getShippingMethod();
             initIframe();
             iframePaymentFields = '';
         });
-        jQuery('#p_method_bluepay_payment').prop( "checked", true);
+        if (!window.order.paymentMethod) {
+            window.order.setPaymentMethod('bluepay_payment');
+            jQuery('#p_method_bluepay_payment').prop( "checked", true);            
+        }
     });
     });
 </script>

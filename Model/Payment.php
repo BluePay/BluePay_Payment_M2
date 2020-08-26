@@ -292,6 +292,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
      */
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
+
         $payment->setAmount($amount);
         if ($payment->getCcTransId()) {
             $payment->setTransactionType(self::REQUEST_TYPE_CAPTURE_ONLY);
@@ -546,10 +547,18 @@ class Payment extends \Magento\Payment\Model\Method\Cc
 
     public function _postRequest(\Magento\Framework\DataObject $request)
     {
+        $iframe_enabled = $request->getAdditionalInformation('iframe');
         $info = $this->getInfoInstance();
         $quotePayment = $this->checkoutSession->getQuote()->getPayment();
         $result = $this->responseFactory->create();
-        if ($info->getIframe() == "1" && $info->getTransactionType() != "CAPTURE") {
+        if (isset($iframe_enabled) && $iframe_enabled == 1 && $info->getTransactionType() != "CAPTURE") {
+            $result->setResult($info->getAdditionalInformation('result'));
+            $result->setMessage($info->getAdditionalInformation('message'));
+            $result->setRrno($info->getAdditionalInformation('token'));
+            $result->setCcNumber($info->getCcNumber());
+            $result->setCardType($info->getAdditionalInformation('card_type'));
+            $this->assignBluePayToken($info->getAdditionalInformation('token'));
+        } else if ($info->getIframe() == "1" && $info->getTransactionType() != "CAPTURE") {
             $result->setResult($info->getResult());
             $result->setMessage($info->getMessage());
             $result->setRrno($info->getToken());
@@ -594,10 +603,10 @@ class Payment extends \Magento\Payment\Model\Method\Cc
                         $this->_wrapGatewayError($e->getMessage())
                     );
             }
-        $r = substr(
-            $response->getHeader('location'),
-            strpos($response->getHeader('location'), "?") + 1
-        );
+            $r = substr(
+                $response->getHeader('location'),
+                strpos($response->getHeader('location'), "?") + 1
+            );
             if ($r) {
                     parse_str($r, $responseFromBP);
                     isset($responseFromBP["Result"]) ? $result->setResult($responseFromBP["Result"]) :
@@ -887,6 +896,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
         $infoInstance = $this->getInfoInstance();
         $infoInstance->setAdditionalInformation('token', $infoInstance->getToken());
         $infoInstance->setAdditionalInformation('trans_id', $infoInstance->getTransID());
+        $infoInstance->setAdditionalInformation('card_type', $infoInstance->getCardType());
         $infoInstance->setAdditionalInformation('result', $infoInstance->getResult());
         $infoInstance->setAdditionalInformation('message', $infoInstance->getMessage());
         $infoInstance->setAdditionalInformation('payment_type', $infoInstance->getPaymentType());
