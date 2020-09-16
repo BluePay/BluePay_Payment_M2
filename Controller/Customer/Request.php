@@ -4,7 +4,7 @@ namespace BluePay\Payment\Controller\Customer;
 class Request extends \Magento\Framework\App\Action\Action
 {
 
-    const CURRENT_VERSION = '1.2.4';
+    const CURRENT_VERSION = '1.2.5';
     /** @var  \Magento\Framework\View\Result\Page */
     private $resultPageFactory;
 

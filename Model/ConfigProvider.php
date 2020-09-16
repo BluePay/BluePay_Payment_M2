@@ -208,7 +208,7 @@ class ConfigProvider implements ConfigProviderInterface
                         'payment/bluepay_payment/use_iframe',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE
                     ),
-                    'iframeUrl' => 'https://secure.bluepay.com/interfaces/shpf?SHPF_FORM_ID=magento2',
+                    'iframeUrl' => 'https://secure.bluepay.com/interfaces/shpf?SHPF_FORM_ID=magento2c',
                     'useCvv2' => $this->scopeConfiguration->getValue(
                         'payment/bluepay_payment/useccv',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE
