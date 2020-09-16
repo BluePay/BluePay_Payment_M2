@@ -31,7 +31,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
 {
     const CGI_URL = 'https://secure.bluepay.com/interfaces/bp10emu';
     const STQ_URL = 'https://secure.bluepay.com/interfaces/stq';
-    const CURRENT_VERSION = '1.2.1';
+    const CURRENT_VERSION = '1.2.4';
 
     const CODE = 'bluepay_payment';
 

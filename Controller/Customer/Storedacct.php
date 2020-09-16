@@ -8,7 +8,7 @@ use Magento\Framework\Controller\ResultFactory;
 class Storedacct extends \Magento\Framework\App\Action\Action
 {
 
-    const CURRENT_VERSION = '1.2.1';
+    const CURRENT_VERSION = '1.2.4';
     /** @var  \Magento\Framework\View\Result\Page */
     private $resultPageFactory;
 

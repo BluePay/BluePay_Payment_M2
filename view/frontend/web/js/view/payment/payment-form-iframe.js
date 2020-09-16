@@ -100,7 +100,8 @@ define(
                         jQuery("#result").val(event.data["Result"]);
                         jQuery("#message").val(event.data["MESSAGE"]);
                         jQuery("#ccType").val(event.data["CARD_TYPE"]);
-                        jQuery("#token").val(event.data["MASTER_ID"]);
+                        let $token = event.data["MASTER_ID"] ? event.data["MASTER_ID"] : event.data["TRANS_ID"];
+                        jQuery("#token").val($token);
                         jQuery("#transID").val(event.data["TRANS_ID"]);
                         jQuery("#paymentType").val(event.data["PAYMENT_TYPE"]);
                         jQuery('#paymentAcctMask').val(event.data["PAYMENT_ACCOUNT"]);
@@ -178,7 +179,12 @@ define(
                             iframeFields += '&' + key + '=' + encodeURIComponent(value);
                         });
                     $("#iframe").attr('src', window.checkoutConfig.payment.bluepay_payment.iframeUrl + iframeFields);
-                    $("#iframe").height(230);
+                    
+                    if (jQuery("#bluepay_payment_payment_type").val() == 'ACH') {
+                        $("#iframe").height(220);
+                    } else {
+                        $("#iframe").height(290);
+                    }
                     $("#iframe").width(600);
                 }
 
@@ -512,7 +518,11 @@ define(
                         iframeFields += '&' + key + '=' + encodeURIComponent(value);
                     });
                     $("#iframe").attr('src', window.checkoutConfig.payment.bluepay_payment.iframeUrl + iframeFields + iframePaymentFields);
-                    $("#iframe").height(230);
+                    if (jQuery("#bluepay_payment_payment_type").val() == 'ACH') {
+                        $("#iframe").height(220);
+                    } else {
+                        $("#iframe").height(290);
+                    }
                     $("#iframe").width(600);
             },
             getResult: function() {
