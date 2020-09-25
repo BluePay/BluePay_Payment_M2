@@ -221,7 +221,7 @@ define(
                                     "&CC_NUM=" + acct.label.substring(0, acct.label.indexOf('-')) +
                                     "&CARD_EXPIRE=" + acct.label.split('[')[1].split('/')[0] + acct.label.split('[')[1].split('/')[1].split([']'])[0] +
                                     "&ACH_ACCOUNT_TYPE=C" +
-                                    "&ACH_ACCOUNT="
+                                    "&ACH_ACCOUNT=" +
                                     "&ACH_ROUTING=";
                                 /*document.getElementById("bluepay_payment_cc_number").value = acct.label.substring(0, acct.label.indexOf('-'));
                                 document.getElementById("bluepay_payment_expiration").value = acct.label.split('[')[1].split('/')[0];
