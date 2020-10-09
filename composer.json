@@ -2,7 +2,7 @@
     "name": "bluepay/payment",
     "description": "BluePay credit card & ACH Payment plugin for M2",
     "type": "magento2-module",
-    "version": "1.2.5",
+    "version": "1.2.6",
     "license": [
         "OSL-3.0"
     ],

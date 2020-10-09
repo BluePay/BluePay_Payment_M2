@@ -31,7 +31,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
 {
     const CGI_URL = 'https://secure.bluepay.com/interfaces/bp10emu';
     const STQ_URL = 'https://secure.bluepay.com/interfaces/stq';
-    const CURRENT_VERSION = '1.2.5';
+    const CURRENT_VERSION = '1.2.6';
 
     const CODE = 'bluepay_payment';
 
@@ -547,9 +547,12 @@ class Payment extends \Magento\Payment\Model\Method\Cc
 
     public function _postRequest(\Magento\Framework\DataObject $request)
     {
-        $iframe_enabled = $request->getAdditionalInformation('iframe');
-        $info = $this->getInfoInstance();
         $quotePayment = $this->checkoutSession->getQuote()->getPayment();
+        $info = $this->getInfoInstance();
+        $iframe_enabled = $request->getAdditionalInformation('iframe') == "1" ||
+                            $info->getIframe() == "1" || 
+                            $info->getAdditionalInformation('iframe') == "1" || 
+                            $quotePayment->getAdditionalInformation('iframe') == "1";
         $result = $this->responseFactory->create();
         if (isset($iframe_enabled) && $iframe_enabled == 1 && $info->getTransactionType() != "CAPTURE") {
             $result->setResult($info->getAdditionalInformation('result'));
@@ -583,14 +586,14 @@ class Payment extends \Magento\Payment\Model\Method\Cc
             $result->setAvs($info->getAdditionalInformation('avs'));
             $result->setCvv2($info->getAdditionalInformation('cvv2'));
             $this->assignBluePayToken($result->getRrno());
-        } else {
+        } else if (!isset($iframe_enabled) || $iframe_enabled != 1) {
             $client = $this->zendClientFactory->create();
             $uri = self::CGI_URL;
             $client->setUri($uri ? $uri : self::CGI_URL);
             $client->setConfig([
                 'maxredirects'=>0,
                 'timeout'=>15,
-        'useragent'=>'BluePay Magento 2 Payment Plugin/' . self::CURRENT_VERSION,
+                'useragent'=>'BluePay Magento 2 Payment Plugin/' . self::CURRENT_VERSION,
             ]);
             $client->setParameterPost($request->getData());
             $client->setMethod(\Zend_Http_Client::POST);
@@ -640,7 +643,7 @@ class Payment extends \Magento\Payment\Model\Method\Cc
                         $result->setCardType('');
             $this->assignBluePayToken($result->getRrno());
             } else {
-                    throw new \Magento\Framework\Exception\LocalizedException(__('Error in payment gateway.'));
+                throw new \Magento\Framework\Exception\LocalizedException(__('Error in payment gateway.'));
             }
 
             if ($this->getConfigData('debug')) {
@@ -654,7 +657,10 @@ class Payment extends \Magento\Payment\Model\Method\Cc
                 $debugData['result'] = $result->getData();
                 $this->_debug($debugData);
             }
+        } else {
+            throw new \Magento\Framework\Exception\LocalizedException(__('Error in payment gateway.'));
         }
+
         if (($info->getIframe() == "1" || $info->getAdditionalInformation('iframe') == "1") && $this->getConfigData('debug')) {
             $debugData = clone $result;
             $debugData = ['result' => $debugData];

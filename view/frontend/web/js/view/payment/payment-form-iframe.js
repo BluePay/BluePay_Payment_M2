@@ -157,19 +157,19 @@ define(
                         var state = window.checkoutConfig.payment.bluepay_payment.customerRegion != null && window.checkoutConfig.payment.bluepay_payment.customerRegion != '' ? window.checkoutConfig.payment.bluepay_payment.customerRegion : '';
                         var zip = window.checkoutConfig.payment.bluepay_payment.customerZip != null && window.checkoutConfig.payment.bluepay_payment.customerZip != '' ? window.checkoutConfig.payment.bluepay_payment.customerZip : '';
                     }
-                    iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
-                        "&TRANSACTION_TYPE=" + transType +
-                        "&PAYMENT_TYPE=" + paymentType +
-                        "&NAME1=" + name1 +
-                        "&NAME2=" + name2 +
-                        "&COMPANY_NAME=" + company +
-                        "&EMAIL=" + email +
-                        "&ADDR1=" + addr1 +
-                        "&CITY=" + city +
-                        "&STATE=" + state +
-                        "&ZIPCODE=" + zip +
+                    iframeFields = "&AMOUNT=" + encodeURIComponent(quote.getTotals()()['base_grand_total']) +
+                        "&TRANSACTION_TYPE=" + encodeURIComponent(transType) +
+                        "&PAYMENT_TYPE=" + encodeURIComponent(paymentType) +
+                        "&NAME1=" + encodeURIComponent(name1) +
+                        "&NAME2=" + encodeURIComponent(name2) +
+                        "&COMPANY_NAME=" + encodeURIComponent(company) +
+                        "&EMAIL=" + encodeURIComponent(email) +
+                        "&ADDR1=" + encodeURIComponent(addr1) +
+                        "&CITY=" + encodeURIComponent(city) +
+                        "&STATE=" + encodeURIComponent(state) +
+                        "&ZIPCODE=" + encodeURIComponent(zip) +
                         "&CUSTOMER_IP=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerIP) +
-                        "&MERCHANT=" + window.checkoutConfig.payment.bluepay_payment.accountId + 
+                        "&MERCHANT=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.accountId) + 
                         "&TAMPER_PROOF_SEAL=" + window.checkoutConfig.payment.bluepay_payment.tps +
                         "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
                         "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
@@ -251,24 +251,24 @@ define(
                                 this.expirationYear = '';
                             }
                         }
-                        iframeFields = "&AMOUNT=" + quote.getTotals()()['base_grand_total'] +
-                            "&TRANSACTION_TYPE=" + window.checkoutConfig.payment.bluepay_payment.transType +
-                            "&RRNO=" + this.token +
-                            "&NAME1=" + window.checkoutConfig.payment.bluepay_payment.customerName1 +
-                            "&NAME2=" + window.checkoutConfig.payment.bluepay_payment.customerName2 +
-                            "&COMPANY_NAME=" + window.checkoutConfig.payment.bluepay_payment.customerCompany +
-                            "&EMAIL=" + window.checkoutConfig.payment.bluepay_payment.customerEmail +
-                            "&ADDR1=" + window.checkoutConfig.payment.bluepay_payment.customerStreet +
-                            "&CITY=" + window.checkoutConfig.payment.bluepay_payment.customerCity +
-                            "&STATE=" + window.checkoutConfig.payment.bluepay_payment.customerRegion +
+                        iframeFields = "&AMOUNT=" + encodeURIComponent(quote.getTotals()()['base_grand_total']) +
+                            "&TRANSACTION_TYPE=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.transType) +
+                            "&RRNO=" + encodeURIComponent(this.token) +
+                            "&NAME1=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerName1) +
+                            "&NAME2=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerName2) +
+                            "&COMPANY_NAME=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerCompany) +
+                            "&EMAIL=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerEmail) +
+                            "&ADDR1=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerStreet) +
+                            "&CITY=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerCity) +
+                            "&STATE=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerRegion) +
                             "&CUSTOMER_IP=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerIP) +
-                            "&ZIPCODE=" + window.checkoutConfig.payment.bluepay_payment.customerZip +
-                            "&MERCHANT=" + window.checkoutConfig.payment.bluepay_payment.accountId + 
-                            "&TAMPER_PROOF_SEAL=" + window.checkoutConfig.payment.bluepay_payment.tps +
-                            "&USE_CVV2=" + window.checkoutConfig.payment.bluepay_payment.useCvv2 +
-                            "&MODE=" + window.checkoutConfig.payment.bluepay_payment.transMode +
-                            "&ORDER_ID=" + window.checkoutConfig.payment.bluepay_payment.reservedOrderId + 
-                            "&TPS_DEF=" + window.checkoutConfig.payment.bluepay_payment.tpsDef;
+                            "&ZIPCODE=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.customerZip) +
+                            "&MERCHANT=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.accountId )+ 
+                            "&TAMPER_PROOF_SEAL=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.tps) +
+                            "&USE_CVV2=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.useCvv2) +
+                            "&MODE=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.transMode) +
+                            "&ORDER_ID=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.reservedOrderId) + 
+                            "&TPS_DEF=" + encodeURIComponent(window.checkoutConfig.payment.bluepay_payment.tpsDef);
                             $.each(window.checkoutConfig.payment.bluepay_payment.level3, function( key, value ) {
                                 iframeFields += '&' + key + '=' + encodeURIComponent(value);
                             });
